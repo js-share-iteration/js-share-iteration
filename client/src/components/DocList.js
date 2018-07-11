@@ -13,12 +13,18 @@ class DocList extends Component {
   }
 
   componentDidMount() {
+    // to do: if no cookie at all, then don't even bother making api call
+    
     axios.get('/api/getdocuments')
       .then(res => {
         this.setState({
           my_docs: res.data.owned,
           shared_docs: res.data.permitted
         });
+      }).catch(err => {
+        // not logged in with correct cookie
+        console.log(err);
+        this.props.history.push('/');
       });
   }
   

@@ -21,8 +21,6 @@ module.exports = function(pool) {
       
       // passport deserialize complete
       done(null, user);
-    }).catch(err => {
-      if (err) throw new Error(err);
     });
   });
   
@@ -54,8 +52,6 @@ module.exports = function(pool) {
           
           // passport deserialize complete
           done(null, user);
-        }).catch(err => {
-          if (err) throw new Error(err);
         });
       }
     )
