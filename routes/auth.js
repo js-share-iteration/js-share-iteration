@@ -4,17 +4,12 @@ module.exports = app => {
   app.get(
     '/auth/google',
     passport.authenticate('google', {
-      scope: ['profile', 'email']
+      scope: ['profile', 'email'],
     })
   );
-
-  app.get(
-    '/auth/google/callback',
-    passport.authenticate('google'),
-    (req, res) => {
-      res.redirect('/documents');
-    }
-  );
+  app.get('/auth/google/callback', passport.authenticate('google'), (req, res) => {
+    res.redirect('/documents');
+  });
 
   app.get('/api/logout', (req, res) => {
     req.logout(); // logout added by passport
@@ -25,4 +20,3 @@ module.exports = app => {
     res.send(req.user); // req.user generated from cookie session and passport
   });
 };
-
