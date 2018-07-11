@@ -25,8 +25,8 @@ module.exports = function(pool) {
         'INSERT INTO files (doc_id, text_content, name, path) VALUES($1, $2, $3, $4) RETURNING *';
       const { doc_id } = res.locals;
       const text_content = '';
-      const name = res.locals.name ? res.locals.name : 'main.js';
-      const path = `/${req.body.name}/${name}`;
+      const name = 'main.js';
+      const path = name;
       const values = [doc_id, text_content, name, path];
       pool
         .query(queryText, values)
@@ -138,23 +138,28 @@ module.exports = function(pool) {
     },
 
     saveDocumentContent: (req, res, next) => {
-      // sends req.body.text_content
-      const queryText =
-        'UPDATE documents SET text_content =$1, last_updated= $2 WHERE doc_id=$3 RETURNING *';
-      const value = [req.body.text_content, new Date(), req.params.id];
-      pool
-        .query(queryText, value)
-        .then(result => {
-          console.log(result.row);
-          // res.locals.text_content = result.row;
-          next();
-        })
-        .catch(err => {
-          console.log('end');
-          if (err) throw new Error(err);
-        });
+      const value = req.body.doc_id;
+      const queryText = 'delete * from files where doc_id=$1';
+      pool.query(queryText, value).then(res => {
+        const values = req.body.files.map(file =>
+          values.push([file.doc_id, file.name, file.text_content, file.path])
+        );
+        const sql = format(
+          'INSERT INTO files (doc_id, name, text_content, path) VALUES %L',
+          values
+        );
+        pool
+          .query(sql)
+          .then(result => {
+            console.log(result.row);
+            next();
+          })
+          .catch(err => {
+            console.log('end');
+            if (err) throw new Error(err);
+          });
+      });
     },
-
     getMyDocs: (req, res, next) => {
       console.log('getting documents');
       res.locals.docs = { owned: [], permitted: [] };
