@@ -139,8 +139,8 @@ module.exports = function(pool) {
     },
 
     saveDocumentContent: (req, res, next) => {
-      const value = req.body.docId;
-      const queryText = 'delete * from files where doc_id=$1';
+      const value = [req.body.docId];
+      const queryText = 'delete from files where doc_id=$1';
       pool.query(queryText, value).then(res => {
         const values = req.body.files.map(file => {
           return [req.body.docId, file.name, file.text_content]
@@ -234,7 +234,7 @@ module.exports = function(pool) {
     //       } else {
     //         res.locals.result = 'Document not found';
     //       }
-    // 
+    //
     //       next();
     //     })
     //     .catch(err => {

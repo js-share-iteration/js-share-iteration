@@ -2,10 +2,22 @@ body {
   font-family: sans-serif;
   font-size: 16px;
 }
+.card-text:last-child {
+  border: ridge;
+}
 
 .createFileForm {
-  border-right: solid;
-  padding-left: 10px 0;
+  border-right: ridge;
+  padding-right: 15px;
+}
+.card1 {
+  border-right: ridge;
+  padding-right: 15px;
+}
+.files {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  background-color: lightgrey;
+  margin-bottom: 10px;
 }
 
 .container {
