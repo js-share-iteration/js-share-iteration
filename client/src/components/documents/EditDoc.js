@@ -18,6 +18,7 @@ class EditDoc extends Component {
     this.runCode = this.runCode.bind(this);
     this.clearConsole = this.clearConsole.bind(this);
     this.saveCode = this.saveCode.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
   handleFileClick = fileIndex => {
     this.setState({ index: fileIndex });
@@ -25,7 +26,7 @@ class EditDoc extends Component {
   saveCode() {
     let docId = this.props.location.pathname.slice(9);
     axios
-      .put(`/api/document/${docId}`, {docId, files: this.state.files })
+      .put(`/api/document/${docId}`, { docId, files: this.state.files })
       .then(res => {
         console.log('Success', res.data);
       })
@@ -51,7 +52,8 @@ class EditDoc extends Component {
   }
 
   runCode() {
-    const before = `
+    try {
+      const before = `
       const results = [];
       function logger(value) {results.push(value);};
       var console = {}; console.log = logger;
@@ -64,18 +66,34 @@ class EditDoc extends Component {
         return module.exports;
       };
     `;
+      const after = '; results';
+      const results = eval(before + this.state.files[0].text_content + after);
 
-    const after = '; results';
-    const results = eval(before + this.state.files[0].text_content + after);
-
-    let consoleText = this.state.console;
-    results.forEach(result => {
-      consoleText += result;
-      consoleText += '\n';
-    });
-    this.setState({
-      console: consoleText,
-    });
+      let consoleText = this.state.console;
+      results.forEach(result => {
+        consoleText += result;
+        consoleText += '\n';
+      });
+      this.setState({
+        console: consoleText,
+      });
+    } catch (error) {
+      this.setState({
+        console: error,
+      });
+    }
+  }
+  handleKeyPress(e) {
+    if (e.keyCode === 9) {
+      e.preventDefault();
+      let docId = this.props.location.pathname.slice(9);
+      const tab = '  ';
+      const tabbedInputValue = e.target.value + tab;
+      this.state.files[this.state.index].text_content = tabbedInputValue;
+      this.setState({
+        files: this.state.files,
+      });
+    }
   }
   //-------------functionality for CREATE FILE FORM---------------//
   handleChange = event => {
@@ -133,7 +151,6 @@ class EditDoc extends Component {
   componentWillUnmount() {
     // if no socket to close, then return
     // if (!this.socket) return;
-
     // let docId = this.props.location.pathname.slice(9);
     // this.socket.emit('leave doc', { docId });
   }
@@ -145,22 +162,25 @@ class EditDoc extends Component {
     return (
       <div className="container">
         <div className="card-group">
-        <div className="createFileForm">
-          <div className="formCard">
-          <form onSubmit={this.handleSubmit}>
-            <input
-              type="text"
-              placeholder="add file here..."
-              value={this.state.inputValue}
-              onChange={this.handleChange}
-            />
-            <input type="submit" value="Submit" />
-            <button class="nav-link disabled" onClick={this.handleCreateFileCancel}>Cancel</button>
-          </form> <br/><br/>
+          <div className="createFileForm">
+            <div className="formCard">
+              <form onSubmit={this.handleSubmit}>
+                <input
+                  type="text"
+                  placeholder="add file here..."
+                  value={this.state.inputValue}
+                  onChange={this.handleChange}
+                />
+                <input type="submit" value="Submit" />
+                <button class="nav-link disabled" onClick={this.handleCreateFileCancel}>
+                  Cancel
+                </button>
+              </form>{' '}
+              <br />
+              <br />
+            </div>
 
-        </div>
-
-        <div className="displayFiles">Your Files</div>
+            <div className="displayFiles">Your Files</div>
             <div className="card-text-left">
               <div className="card-body">
                 {/* <h5 className="card-title">{this.state.docTitle}</h5> */}
@@ -200,6 +220,7 @@ class EditDoc extends Component {
                   onChange={this.updateCode}
                   id="DocText"
                   rows="10"
+                  onKeyDown={e => this.handleKeyPress(e)}
                 />
               </div>
             </div>
