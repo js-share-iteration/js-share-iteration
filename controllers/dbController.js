@@ -23,12 +23,11 @@ module.exports = function(pool) {
     },
     createFile: (req, res, next) => {
       const queryText =
-        'INSERT INTO files (doc_id, text_content, name, path) VALUES($1, $2, $3, $4) RETURNING *';
+        'INSERT INTO files (doc_id, text_content, name) VALUES($1, $2, $3) RETURNING *';
       const { doc_id } = res.locals;
       const text_content = '';
       const name = 'main.js';
-      const path = name;
-      const values = [doc_id, text_content, name, path];
+      const values = [doc_id, text_content, name];
       pool
         .query(queryText, values)
         .then(result => {
