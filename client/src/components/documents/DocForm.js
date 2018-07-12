@@ -68,17 +68,44 @@ class DocForm extends Component {
   }
 
   componentDidMount() {
+    console.log('front end docId:');
+    console.log(this.props.docId);
+    
+    // route protect against a bad docId
+    if (parseInt(this.props.docId) != this.props.docId)
+      return this.props.history.push('/');
+    
+    // we're attempting to create a new document
     if (!this.props.docId) {
-      this.setState({ init: true });
-    }
-    // if docId make axios get request to server for docTitle and sharedUsers
-    axios.get(`/api/docSettings/${this.props.docId}`).then(res => {
-      this.setState({
-        init: true,
-        docTitle: res.data.docTitle,
-        sharedUsers: res.data.sharedUsers
+      axios.get('/api/current_user').then(res => {
+        console.log(res);
+        if (res.data)
+          this.setState({init: true});
+        else
+          this.props.history.push('/');
       });
-    }).catch(err => console.log(err));
+    }
+    // we're attempting to edit an already existing document
+    else {
+      axios.get(`/api/docSettings/${this.props.docId}`).then(res => {
+        console.log('response');
+        console.log(res.data);
+        console.log(typeof res.data);
+        
+        this.setState({
+          init: true,
+          docTitle: res.data.docTitle,
+          sharedUsers: res.data.sharedUsers
+        });
+      }).catch(err => {
+        // not logged in with correct cookie
+        console.log('error');
+        console.log(err);
+        console.log(typeof err);
+        
+        this.props.history.push('/');
+      });
+    }
   }
 
   //API Call in component did mount that returns list of documents and users associated with document
