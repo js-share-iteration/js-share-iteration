@@ -13,20 +13,15 @@ module.exports = function(pool) {
     console.log('starting deserialize user');
 
     const queryText = 'select * from users where id = $1';
-
-    pool
-      .query(queryText, [id])
-      .then(result => {
-        const user = result.rows[0];
-        console.log('deserialize main result: ');
-        console.log(user.id);
-
-        // passport deserialize complete
-        done(null, user);
-      })
-      .catch(err => {
-        if (err) throw new Error(err);
-      });
+    
+    pool.query(queryText, [id]).then(result => {
+      const user = result.rows[0];
+      console.log('deserialize main result: ');
+      console.log(user.id);
+      
+      // passport deserialize complete
+      done(null, user);
+    });
   });
 
   passport.use(
@@ -42,28 +37,22 @@ module.exports = function(pool) {
         const id = profile.id;
         const name = profile.displayName;
         const email = profile.emails[0].value;
-
-        const queryText =
-          'insert into users (id, name, email) ' +
-          'values ($1, $2, $3) ' +
-          'on conflict (id) do update set name=$2, email=$3 ' +
-          'returning *';
-
-        pool
-          .query(queryText, [id, name, email])
-          .then(result => {
-            console.log(result.rows);
-
-            const user = result.rows[0];
-            console.log('google auth:');
-            console.log(user.id);
-
-            // passport deserialize complete
-            done(null, user);
-          })
-          .catch(err => {
-            if (err) throw new Error(err);
-          });
+        
+        const queryText = 'insert into users (id, name, email) ' +
+        'values ($1, $2, $3) ' +
+        'on conflict (id) do update set name=$2, email=$3 ' +
+        'returning *';
+        
+        pool.query(queryText, [id, name, email]).then(result => {
+          console.log(result.rows);
+          
+          const user = result.rows[0];
+          console.log('google auth:');
+          console.log(user.id);
+          
+          // passport deserialize complete
+          done(null, user);
+        });
       }
     )
   );
