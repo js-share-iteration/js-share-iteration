@@ -5,7 +5,7 @@ module.exports = function(pool) {
   return {
     createDoc: (req, res, next) => {
       const queryText =
-        'INSERT INTO documents ( owner, name, last_updated) VALUES($1, $2, $3) RETURNING *';
+        'INSERT INTO documents (owner, name, last_updated) VALUES($1, $2, $3) RETURNING *';
       const values = [req.user.id, req.body.name, new Date()];
 
       pool
@@ -220,26 +220,26 @@ module.exports = function(pool) {
           if (err) throw new Error(err);
         });
     },
-    getFileText: (req, res, next) => {
-      const queryText = 'SELECT text_content, name, last_updated FROM documents WHERE doc_id=$1 ';
-      console.log(req.params.id, req.params);
-      const value = [req.params.id];
-      pool
-        .query(queryText, value)
-        .then(result => {
-          console.log(result.rows[0], 'here at getdocfiles');
-          if (result.rows[0]) {
-            res.locals.result = result.rows[0];
-          } else {
-            res.locals.result = 'Document not found';
-          }
-
-          next();
-        })
-        .catch(err => {
-          console.log('end, found nothing');
-          if (err) throw new Error(err);
-        });
-    },
+    // getFileText: (req, res, next) => {
+    //   const queryText = 'SELECT text_content, name, last_updated FROM documents WHERE doc_id=$1 ';
+    //   console.log(req.params.id, req.params);
+    //   const value = [req.params.id];
+    //   pool
+    //     .query(queryText, value)
+    //     .then(result => {
+    //       console.log(result.rows[0], 'here at getdocfiles');
+    //       if (result.rows[0]) {
+    //         res.locals.result = result.rows[0];
+    //       } else {
+    //         res.locals.result = 'Document not found';
+    //       }
+    // 
+    //       next();
+    //     })
+    //     .catch(err => {
+    //       console.log('end, found nothing');
+    //       if (err) throw new Error(err);
+    //     });
+    // },
   };
 };
