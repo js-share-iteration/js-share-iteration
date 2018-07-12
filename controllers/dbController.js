@@ -5,8 +5,8 @@ const format = require('pg-format');
 module.exports = function (pool) {
     return {
         createDoc: (req, res, next) => {
-            const queryText = 'INSERT INTO documents ( owner, name, text_content, last_updated) VALUES($1, $2, $3, $4) RETURNING *';
-            const values = [req.user.id, req.body.name, '', new Date()];
+            const queryText = 'INSERT INTO documents ( owner, name, last_updated) VALUES($1, $2, $3) RETURNING *';
+            const values = [req.user.id, req.body.name, new Date()];
 
             pool.query(queryText, values).then(result => {
                 console.log('data saved')

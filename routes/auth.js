@@ -16,6 +16,21 @@ module.exports = app => {
     }
   );
 
+  app.get(
+    '/auth/github',
+    passport.authenticate('github', {
+      scope: ['id']
+    })
+  );
+
+  app.get(
+    '/auth/github/callback',
+    passport.authenticate('github'),
+    (req, res) => {
+      res.redirect('/documents')
+    }
+  );
+
   app.get('/api/logout', (req, res) => {
     req.logout(); // logout added by passport
     res.redirect('/');

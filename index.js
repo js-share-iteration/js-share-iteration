@@ -23,6 +23,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 require('./services/googlePassport')(pool);
+require('./services/githubPassport')(pool);
 
 // create server routes here
 require('./routes/auth')(app);
