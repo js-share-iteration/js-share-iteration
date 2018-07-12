@@ -12,7 +12,7 @@ class EditDoc extends Component {
       console: '',
       files: [],
       index: 0,
-      inputValue: ''
+      inputValue: '',
     };
     this.updateCode = this.updateCode.bind(this);
     this.runCode = this.runCode.bind(this);
@@ -34,7 +34,7 @@ class EditDoc extends Component {
 
   clearConsole() {
     this.setState({
-      console: ''
+      console: '',
     });
   }
 
@@ -46,30 +46,35 @@ class EditDoc extends Component {
     // set our own state
     this.state.files[this.state.index].text_content = event.target.value;
     this.setState({
-      files: this.state.files
+      files: this.state.files,
     });
   }
 
   runCode() {
-    console.log('hi begin');
+    const before = `
+      const results = [];
+      function logger(value) {results.push(value);};
+      var console = {}; console.log = logger;
+      const require = (path) => {
+        console.log = () => {};
+        const text = this.state.files.filter(obj => obj.name === path)[0].text_content;
+        let module = {};
+        eval(text)
+        console.log = logger;
+        return module.exports;
+      };
+    `;
 
-    const before =
-      'var results = []; function logger(value) {results.push(value);}; var console = {}; console.log = logger; ';
     const after = '; results';
-    const results = eval(before + this.state.code + after);
-
-    console.log(results);
-    console.log(typeof results);
-    console.log('hi end');
+    const results = eval(before + this.state.files[0].text_content + after);
 
     let consoleText = this.state.console;
     results.forEach(result => {
       consoleText += result;
       consoleText += '\n';
     });
-    console.log(consoleText);
     this.setState({
-      console: consoleText
+      console: consoleText,
     });
   }
   //-------------functionality for CREATE FILE FORM---------------//
@@ -98,7 +103,7 @@ class EditDoc extends Component {
         res.data.sort((a, b) => a.id - b.id);
         this.setState({
           init: true,
-          files: res.data
+          files: res.data,
         });
         // const test = [{name: 'hello'}]
 
@@ -118,7 +123,7 @@ class EditDoc extends Component {
         // receive others' socket text broadcast event
         this.socket.on('receive text', data => {
           this.setState({
-            code: data.text
+            code: data.text,
           });
         });
       })
@@ -142,30 +147,27 @@ class EditDoc extends Component {
     return (
       <div className="container">
         <div className="card-group">
-        <div className="createFileForm">
-          <div className="formCard">
-          <form onSubmit={this.handleSubmit}>
-            <input
-              type="text"
-              placeholder="add file here..."
-              value={this.state.inputValue}
-              onChange={this.handleChange}
-            />
-            <input type="submit" value="Submit" />
-            <button class="nav-link disabled" onClick={this.handleCreateFileCancel}>Cancel</button>
-          </form>
-        </div>
-        <div>Your Files</div>
+          <div className="createFileForm">
+            <div className="formCard">
+              <form onSubmit={this.handleSubmit}>
+                <input
+                  type="text"
+                  placeholder="add file here..."
+                  value={this.state.inputValue}
+                  onChange={this.handleChange}
+                />
+                <input type="submit" value="Submit" />
+                <button class="nav-link disabled" onClick={this.handleCreateFileCancel}>
+                  Cancel
+                </button>
+              </form>
+            </div>
+            <div>Your Files</div>
             <div className="card text-left">
               <div className="card-body">
                 {/* <h5 className="card-title">{this.state.docTitle}</h5> */}
                 {this.state.files.map((file, i) => (
-                  <File
-                    key={i}
-                    index={i}
-                    handleFileClick={this.handleFileClick}
-                    name={file.name}
-                  />
+                  <File key={i} index={i} handleFileClick={this.handleFileClick} name={file.name} />
                 ))}
               </div>
             </div>
@@ -187,9 +189,7 @@ class EditDoc extends Component {
                 </ul>
               </div>
               <div className="card-body">
-                <h5 className="card-title">
-                  {this.state.files[this.state.index].name}
-                </h5>
+                <h5 className="card-title">{this.state.files[this.state.index].name}</h5>
               </div>
             </div>
             <div className="card-body">
@@ -211,10 +211,7 @@ class EditDoc extends Component {
               <div className="card-header">
                 <ul className="nav nav-pills card-header-pills">
                   <li className="nav-item">
-                    <button
-                      onClick={this.clearConsole}
-                      className="nav-link disabled"
-                    >
+                    <button onClick={this.clearConsole} className="nav-link disabled">
                       Clear
                     </button>
                   </li>
