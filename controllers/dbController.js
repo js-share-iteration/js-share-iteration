@@ -139,14 +139,14 @@ module.exports = function(pool) {
     },
 
     saveDocumentContent: (req, res, next) => {
-      const value = req.body.doc_id;
-      const queryText = 'delete * from files where doc_id=$1';
+      const value = [req.body.docId];
+      const queryText = 'delete from files where doc_id=$1';
       pool.query(queryText, value).then(res => {
-        const values = req.body.files.map(file =>
-          values.push([file.doc_id, file.name, file.text_content, file.path])
-        );
+        const values = req.body.files.map(file => {
+          return [req.body.docId, file.name, file.text_content]
+        });
         const sql = format(
-          'INSERT INTO files (doc_id, name, text_content, path) VALUES %L',
+          'INSERT INTO files (doc_id, name, text_content) VALUES %L',
           values
         );
         pool
@@ -203,7 +203,7 @@ module.exports = function(pool) {
         });
     },
     getDocFiles: (req, res, next) => {
-      const queryText = `SELECT f.* from files f join documents d on d.doc_id=f.doc_id where d.doc_id=$1`;
+      const queryText = `SELECT f.name, f.text_content from files f join documents d on d.doc_id=f.doc_id where d.doc_id=$1 ORDER BY f.id`;
       const value = [req.params.id];
       pool
         .query(queryText, value)
@@ -234,7 +234,7 @@ module.exports = function(pool) {
     //       } else {
     //         res.locals.result = 'Document not found';
     //       }
-    // 
+    //
     //       next();
     //     })
     //     .catch(err => {

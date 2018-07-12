@@ -25,7 +25,7 @@ class EditDoc extends Component {
   saveCode() {
     let docId = this.props.location.pathname.slice(9);
     axios
-      .put(`/api/document/${docId}`, { text_content: this.state.code })
+      .put(`/api/document/${docId}`, {docId, files: this.state.files })
       .then(res => {
         console.log('Success', res.data);
       })
@@ -41,7 +41,7 @@ class EditDoc extends Component {
   updateCode(event) {
     let docId = this.props.location.pathname.slice(9);
     // socket broadcast to others
-    this.socket.emit('edit text', { docId, text: event.target.value });
+    // this.socket.emit('edit text', { docId, text: event.target.value });
 
     // set our own state
     this.state.files[this.state.index].text_content = event.target.value;
@@ -99,8 +99,6 @@ class EditDoc extends Component {
     axios
       .get(`/api/document/${docId}`)
       .then(res => {
-        console.log(res.data[0]);
-        res.data.sort((a, b) => a.id - b.id);
         this.setState({
           init: true,
           files: res.data,
@@ -114,18 +112,18 @@ class EditDoc extends Component {
         console.log(this.state.files);
 
         // set up sockets
-        this.socket = io();
-        this.socket.on('connect', () => {
-          // emit join doc on connect
-          this.socket.emit('join doc', { docId });
-        });
+        // this.socket = io();
+        // this.socket.on('connect', () => {
+        //   // emit join doc on connect
+        //   this.socket.emit('join doc', { docId });
+        // });
 
-        // receive others' socket text broadcast event
-        this.socket.on('receive text', data => {
-          this.setState({
-            code: data.text,
-          });
-        });
+        // // receive others' socket text broadcast event
+        // this.socket.on('receive text', data => {
+        //   this.setState({
+        //     code: data.text
+        //   });
+        // });
       })
       .catch(err => console.log(err));
   }
@@ -134,10 +132,10 @@ class EditDoc extends Component {
 
   componentWillUnmount() {
     // if no socket to close, then return
-    if (!this.socket) return;
+    // if (!this.socket) return;
 
-    let docId = this.props.location.pathname.slice(9);
-    this.socket.emit('leave doc', { docId });
+    // let docId = this.props.location.pathname.slice(9);
+    // this.socket.emit('leave doc', { docId });
   }
 
   render() {
@@ -147,23 +145,23 @@ class EditDoc extends Component {
     return (
       <div className="container">
         <div className="card-group">
-          <div className="createFileForm">
-            <div className="formCard">
-              <form onSubmit={this.handleSubmit}>
-                <input
-                  type="text"
-                  placeholder="add file here..."
-                  value={this.state.inputValue}
-                  onChange={this.handleChange}
-                />
-                <input type="submit" value="Submit" />
-                <button class="nav-link disabled" onClick={this.handleCreateFileCancel}>
-                  Cancel
-                </button>
-              </form>
-            </div>
-            <div>Your Files</div>
-            <div className="card text-left">
+        <div className="createFileForm">
+          <div className="formCard">
+          <form onSubmit={this.handleSubmit}>
+            <input
+              type="text"
+              placeholder="add file here..."
+              value={this.state.inputValue}
+              onChange={this.handleChange}
+            />
+            <input type="submit" value="Submit" />
+            <button class="nav-link disabled" onClick={this.handleCreateFileCancel}>Cancel</button>
+          </form> <br/><br/>
+
+        </div>
+
+        <div className="displayFiles">Your Files</div>
+            <div className="card-text-left">
               <div className="card-body">
                 {/* <h5 className="card-title">{this.state.docTitle}</h5> */}
                 {this.state.files.map((file, i) => (
@@ -172,7 +170,7 @@ class EditDoc extends Component {
               </div>
             </div>
           </div>
-          <div className="card">
+          <div className="card1">
             <div className="card text-center">
               <div className="card-header">
                 <ul className="nav nav-pills card-header-pills">
@@ -206,7 +204,7 @@ class EditDoc extends Component {
               </div>
             </div>
           </div>
-          <div className="card">
+          <div className="card2">
             <div className="card text-center">
               <div className="card-header">
                 <ul className="nav nav-pills card-header-pills">
