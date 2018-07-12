@@ -9,20 +9,26 @@ module.exports = function (pool) {
       next();
     },
     requirePermissions: (req, res, next) => {
-      const doc_id = req.params.id || req.body.doc_id;
+      const doc_id = req.params.id || res.locals.doc_id || req.body.doc_id;
       
       // is this our own document?
       const queryText = 'select documents.doc_id from documents inner join users on users.id=documents.owner where documents.doc_id=$1';
       const data = [doc_id];
       pool.query(queryText, data).then(result => {
-        // this is our own file
-        if (result.rows.length === 1) next();
+        // notify that this is our own file
+        if (result.rows.length === 1) {
+          res.locals.ownFile = true;
+          return;
+        }
         
         // is this document shared to us by someone else?
         const queryText = 'select documents.doc_id from documents inner join document_permissions on document_permissions.doc_id=documents.doc_id where document_permissions.permitted_user=$1';
         const data = [doc_id];
         return pool.query(queryText, data);
       }).then(result => {
+        // this is indeed our own file
+        if (res.locals.ownFile) return next();
+        
         // we haven't been shared this document
         if (result.rows.length === 0)
           return res.status(401).send({error: 'Not permitted to access file.'});

@@ -8,7 +8,7 @@ import DocList from './DocList.js';
 import EditDoc from './documents/EditDoc.js';
 import CreateDoc from './documents/CreateDoc.js';
 import Settings from './documents/Settings.js';
-
+import RedirectHome from './RedirectHome.js';
 
 class App extends Component {
   constructor(props) {
@@ -38,6 +38,7 @@ class App extends Component {
             <Route path="/newdoc" component={CreateDoc} />
             <Route path="/editdoc/:id" component={EditDoc}  />
             <Route path="/settings/:id" component={Settings} />
+            <Route path="/" component={RedirectHome} />
           </Switch>
         </div>
       </BrowserRouter>
@@ -46,3 +47,4 @@ class App extends Component {
 }
 
 export default App;
+
