@@ -33,9 +33,14 @@ class Header extends Component {
         <li className="float-left nav-item" key={'hello'}>
           <Link className="nav-link" to="/">Home</Link>
         </li>,
-        <li className="nav-item" key={'signin'}>
-          <a className="nav-link float-right" href="/auth/google">Sign In</a>
-        </li>]
+      
+        // <li className="nav-item" key={'signin'}>
+        //   <a className="nav-link float-right" href="/auth/google">Google Sign In</a>
+        // </li>,
+        // <li className="nav-item" key={'signin'}>
+        //   <a className="nav-link float-right" href="/auth/github">Github Sign In</a>
+        // </li>
+      ]
     }
   }
 

@@ -7,11 +7,31 @@ module.exports = app => {
       scope: ['profile', 'email'],
     })
   );
-  
-  app.get('/auth/google/callback', passport.authenticate('google'), (req, res) => {
-    res.redirect('/documents');
-  });
-  
+
+  app.get(
+    '/auth/google/callback',
+    passport.authenticate('google'),
+    (req, res) => {
+      res.redirect('/documents');
+    }
+  );
+
+  app.get(
+    '/auth/github',
+    passport.authenticate('github', {
+      scope: ['id']
+    })
+  );
+
+  app.get(
+    '/auth/github/callback',
+    passport.authenticate('github'),
+    (req, res) => {
+      res.redirect('/documents')
+    }
+  );
+
+
   app.get('/api/logout', (req, res) => {
     req.logout();
     req.session = null; // this is actually needed to clear the cookie session
