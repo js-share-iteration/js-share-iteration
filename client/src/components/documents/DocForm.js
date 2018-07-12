@@ -71,12 +71,12 @@ class DocForm extends Component {
     console.log('front end docId:');
     console.log(this.props.docId);
     
-    // route protect against a bad docId
-    if (parseInt(this.props.docId) != this.props.docId)
+    // route protect against a bad docId, provided we are in settings mode
+    if (this.props.mode === 'settings' && (parseInt(this.props.docId, 10).toString() !== this.props.docId))
       return this.props.history.push('/');
     
     // we're attempting to create a new document
-    if (!this.props.docId) {
+    if (this.props.mode === 'create') {
       axios.get('/api/current_user').then(res => {
         console.log(res);
         if (res.data)
