@@ -17,6 +17,8 @@ module.exports = function (pool) {
       pool.query(queryText, data).then(result => {
         // notify that this is our own file
         if (result.rows.length === 1) {
+          console.log('this is our own document');
+          
           res.locals.ownFile = true;
           return;
         }
@@ -34,6 +36,7 @@ module.exports = function (pool) {
           return res.status(401).send({error: 'Not permitted to access file.'});
         
         // we have been shared this document
+        console.log('we have been shared this document');
         next();
       });
     }

@@ -162,23 +162,21 @@ class EditDoc extends Component {
     return (
       <div className="container">
         <div className="card-group">
-          <div className="createFileForm">
-            <div className="formCard">
-              <form onSubmit={this.handleSubmit}>
-                <input
-                  type="text"
-                  placeholder="add file here..."
-                  value={this.state.inputValue}
-                  onChange={this.handleChange}
-                />
-                <input type="submit" value="Submit" />
-                <button class="nav-link disabled" onClick={this.handleCreateFileCancel}>
-                  Cancel
-                </button>
-              </form>{' '}
-              <br />
-              <br />
-            </div>
+
+        <div className="createFileForm">
+          <div className="formCard">
+          <form onSubmit={this.handleSubmit}>
+            <input
+              type="text"
+              placeholder="add file here..."
+              value={this.state.inputValue}
+              onChange={this.handleChange}
+            />
+            <input class="btn" type="submit" value="Submit" />
+            <button class="btn" onClick={this.handleCreateFileCancel}>Cancel</button>
+          </form> <br/><br/>
+
+        </div>
 
             <div className="displayFiles">Your Files</div>
             <div className="card-text-left">
@@ -248,15 +246,13 @@ class EditDoc extends Component {
             <div className="card-body">
               <h5 className="card-title">JS</h5>
               <div className="card-text" rows="12">
-                <div className="form-group">
-                  <textarea
-                    className="form-control rounded-0"
-                    style={{ fontFamily: 'monospace' }}
-                    value={this.state.console}
-                    id="ConsoleOutput"
-                    rows="10"
-                  />
-                </div>
+                <textarea
+                  className="form-control rounded-0"
+                  style={{ fontFamily: 'monospace' }}
+                  value={this.state.console}
+                  id="ConsoleOutput"
+                  rows="10"
+                />
               </div>
             </div>
           </div>
