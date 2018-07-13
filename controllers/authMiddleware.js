@@ -12,8 +12,8 @@ module.exports = function (pool) {
       const doc_id = req.params.id || res.locals.doc_id || req.body.doc_id;
       
       // is this our own document?
-      const queryText = 'select documents.doc_id from documents inner join users on users.id=documents.owner where documents.doc_id=$1';
-      const data = [doc_id];
+      const queryText = 'select documents.doc_id from documents inner join users on users.id=documents.owner where documents.doc_id=$1 and users.id=$2';
+      const data = [doc_id, req.user.id];
       pool.query(queryText, data).then(result => {
         // notify that this is our own file
         if (result.rows.length === 1) {
