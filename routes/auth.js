@@ -46,3 +46,4 @@ module.exports = app => {
     res.send(req.user); // req.user generated from cookie session and passport
   });
 };
+
