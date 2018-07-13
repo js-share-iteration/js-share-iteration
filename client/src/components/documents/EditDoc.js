@@ -95,6 +95,11 @@ class EditDoc extends Component {
   componentDidMount() {
     let docId = this.props.location.pathname.slice(9);
     console.log(docId);
+    
+    // route protect against a bad docId
+    if (parseInt(docId, 10).toString() !== docId)
+      return this.props.history.push('/');
+    
     // if docId make axios get request to server for docTitle and sharedUsers
     axios
       .get(`/api/document/${docId}`)
@@ -103,12 +108,7 @@ class EditDoc extends Component {
           init: true,
           files: res.data,
         });
-        // const test = [{name: 'hello'}]
 
-        // const mapped = test.map((file, i) => <File key={i} handleFileClick={this.handleFileClick} name={file.name} /> )
-        //   console.log(mapped);
-
-        // this.setState({files: mapped})
         console.log(this.state.files);
 
         // set up sockets
@@ -125,7 +125,14 @@ class EditDoc extends Component {
         //   });
         // });
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        // not logged in with correct cookie
+        console.log('error');
+        console.log(err);
+        console.log(typeof err);
+        
+        this.props.history.push('/');
+      });
   }
 
   componentDidUpdate() {}
