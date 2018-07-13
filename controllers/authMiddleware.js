@@ -11,6 +11,7 @@ module.exports = function (pool) {
     requirePermissions: (req, res, next) => {
       const doc_id = req.params.id || res.locals.doc_id || req.body.doc_id;
       
+      console.log(doc_id);
       // is this our own document?
       const queryText = 'select documents.doc_id from documents inner join users on users.id=documents.owner where documents.doc_id=$1 and users.id=$2';
       const data = [doc_id, req.user.id];
@@ -24,8 +25,8 @@ module.exports = function (pool) {
         }
         
         // is this document shared to us by someone else?
-        const queryText = 'select documents.doc_id from documents inner join document_permissions on document_permissions.doc_id=documents.doc_id where document_permissions.permitted_user=$1';
-        const data = [doc_id];
+        const queryText = 'select documents.doc_id from documents inner join document_permissions on document_permissions.doc_id=documents.doc_id where document_permissions.doc_id=$1 and document_permissions.permitted_user=$2';
+        const data = [doc_id, req.user.email];
         return pool.query(queryText, data);
       }).then(result => {
         // this is indeed our own file
