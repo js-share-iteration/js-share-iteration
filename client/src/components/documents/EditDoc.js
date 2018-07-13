@@ -113,11 +113,11 @@ class EditDoc extends Component {
   componentDidMount() {
     let docId = this.props.location.pathname.slice(9);
     console.log(docId);
-    
+
     // route protect against a bad docId
     if (parseInt(docId, 10).toString() !== docId)
       return this.props.history.push('/');
-    
+
     // if docId make axios get request to server for docTitle and sharedUsers
     axios
       .get(`/api/document/${docId}`)
@@ -148,7 +148,7 @@ class EditDoc extends Component {
         console.log('error');
         console.log(err);
         console.log(typeof err);
-        
+
         this.props.history.push('/');
       });
   }
@@ -179,8 +179,8 @@ class EditDoc extends Component {
               value={this.state.inputValue}
               onChange={this.handleChange}
             />
-            <input class="btn" type="submit" value="Submit" />
-            <button class="btn" onClick={this.handleCreateFileCancel}>Cancel</button>
+            <input className="btn" type="submit" value="Submit" />
+            <button className="btn" onClick={this.handleCreateFileCancel}>Cancel</button>
           </form> <br/><br/>
 
         </div>

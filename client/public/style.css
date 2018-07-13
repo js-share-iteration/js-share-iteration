@@ -9,10 +9,15 @@ body {
 .createFileForm {
   border-right: ridge;
   padding-right: 15px;
+  width: 16%;
 }
 .card1 {
   border-right: ridge;
   padding-right: 15px;
+  width:42%;
+}
+.card2 {
+  width: 42%;
 }
 .files {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
